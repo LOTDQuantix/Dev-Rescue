@@ -82,21 +82,39 @@ const App = {
         try {
             this.elements.loader.classList.remove('hidden');
 
-            // FETCH DIRECTLY FROM SUPABASE
-            const { data, error } = await supabaseClient
-                .from('problems')
-                .select(`
-                    *,
-                    solutions (*)
-                `);
+            // FETCH ALL DATA WITH PAGINATION (Supabase defaults to 1000 limit)
+            let allData = [];
+            const pageSize = 1000;
+            let rangeStart = 0;
+            let rangeEnd = pageSize - 1;
+            let moreData = true;
 
-            if (error) throw error;
+            while (moreData) {
+                const { data, error } = await supabaseClient
+                    .from('problems')
+                    .select(`
+                        *,
+                        solutions (*)
+                    `)
+                    .range(rangeStart, rangeEnd);
+                
+                if (error) throw error;
+                
+                if (data.length > 0) {
+                    allData = allData.concat(data);
+                    rangeStart += pageSize;
+                    rangeEnd += pageSize;
+                }
+                
+                if (data.length < pageSize) {
+                    moreData = false;
+                }
+            }
 
             // Map data to match internal structure
-            // Supabase returns 'platforms' (DB col), we might need 'platform' (JS prop)
-            this.allProblems = data.map(p => ({
+            this.allProblems = allData.map(p => ({
                 ...p,
-                platform: p.platforms || [] // Map DB 'platforms' to 'platform'
+                platform: p.platforms || [] 
             }));
 
             this.filteredProblems = [...this.allProblems];
