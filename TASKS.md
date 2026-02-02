@@ -22,8 +22,8 @@
   - Inserted **3,543** records into `solutions`.
 - [x] **Verification**: Confirmed row counts match source data.
 
-## 🚀 Phase 3: Next Steps & Optimization
-- [x] **UI Integration**: Updated web application to fetch data from Supabase (via local Node.js middleware).
+- [x] **UI Integration**: Updated web application to fetch data from Supabase (Client-side JS).
 - [x] **Cleanup**: Archived temporary expansion files and removed legacy local datasets.
-- [ ] **Search API**: Optimize backend to performed SQL-based search instead of fetching all records.
+- [x] **Deployment Prep**: Refactored to pure static site (HTML/JS) for Cloudflare Pages.
+- [ ] **Search API**: (Skipped) Using Supabase JS SDK query filtering instead.
 - [ ] **Admin Dashboard**: (Optional) interface to add/edit problems directly in the DB.
