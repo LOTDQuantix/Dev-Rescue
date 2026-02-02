@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEV_RESCUE // Terminal Brutalism</title>
+    <meta name="description"
+        content="A problem-first developer help website. Search in plain English for correct commands and safety guidance.">
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Google Fonts: JetBrains Mono for the soul, Inter for context -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="dark-mode terminal-layout">
+    <div class="scanline"></div>
+
+    <header class="terminal-header">
+        <div class="container container-flex">
+            <div class="terminal-logo">
+                <span class="logo-prefix">SYSTEM_READY // </span>
+                <span class="logo-main text-signal">DEV_RESCUE</span>
+            </div>
+            <div class="terminal-status">
+                <span id="clock">00:00:00</span>
+                <button id="theme-toggle" class="btn-terminal" aria-label="Toggle paper-white mode">
+                    [ LIGHT_MODE ]
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="terminal-main">
+        <section class="terminal-search-section">
+            <div class="container">
+                <div class="terminal-boot-log">
+                    <p class="boot-line">> INITIALIZING_DATA_STREAM...</p>
+                    <p class="boot-line">> LOADED_3507_PROBLEMS</p>
+                    <p class="boot-line">> STATUS: <span class="text-success">READY</span></p>
+                </div>
+
+                <div class="terminal-search-box">
+                    <span class="terminal-prompt">$</span>
+                    <input type="text" id="main-search" placeholder="DESCRIBE_THE_MESS..." autocomplete="off" autofocus>
+                    <div class="terminal-cursor"></div>
+                </div>
+
+                <div class="terminal-categories">
+                    <div class="category-grid" id="category-list">
+                        <!-- Categories injected as [ CAT_NAME ] -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="terminal-stream-section">
+            <div class="container">
+                <div id="status-line" class="terminal-status-line hidden">
+                    <span class="text-signal">FOUND:</span> <span id="result-count">0</span> ENTRIES_MATCHED
+                </div>
+
+                <div id="results-grid" class="log-stream">
+                    <!-- Logs injected here -->
+                    <div class="terminal-loader" id="loader">
+                        [ SCANNIG_DATABASE... ]
+                    </div>
+                </div>
+
+                <div id="empty-state" class="terminal-empty hidden">
+                    <p class="text-error">> ERROR_404: NO_SOLUTIONS_FOUND_IN_RECORD.</p>
+                    <p class="text-dim">> SUGGESTION: TRY_DIFFERENT_KEYWORDS_OR_PURGE_CACHE.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="terminal-footer">
+        <div class="container">
+            <p>TERMINAL_SESSION_0.1 // DEV_RESCUE // 2026</p>
+            <p class="text-dim">NO_BACKEND // NO_TRACKING // RAW_HELP</p>
+        </div>
+    </footer>
+
+    <!-- DATA_STREAM: CONNECTED_TO_SUPABASE_VIA_API -->
+    <script src="js/app.js" defer></script>
+</body>
+
+</html>
