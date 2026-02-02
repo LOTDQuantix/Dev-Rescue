@@ -7,7 +7,8 @@
 const SUPABASE_URL = 'https://pyiftzhzijcpqvvzhhjy.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5aWZ0emh6aWpjcHF2dnpoaGp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMjM0NTksImV4cCI6MjA4NTU5OTQ1OX0.lmDc5prm73X-nFRgopxCqkodOaGWEOVcDM19BZGyoDU';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Rename to avoid conflict with window.supabase (the library)
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const App = {
     allProblems: [],
@@ -80,9 +81,9 @@ const App = {
     async loadData() {
         try {
             this.elements.loader.classList.remove('hidden');
-            
+
             // FETCH DIRECTLY FROM SUPABASE
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('problems')
                 .select(`
                     *,
@@ -97,15 +98,15 @@ const App = {
                 ...p,
                 platform: p.platforms || [] // Map DB 'platforms' to 'platform'
             }));
-            
+
             this.filteredProblems = [...this.allProblems];
 
             this.renderCategories();
             this.renderResults();
             this.elements.loader.classList.add('hidden');
-            
+
             console.log('SUCCESS: CONNECTED_TO_SUPABASE_DIRECTLY');
-            
+
         } catch (error) {
             console.error('CRITICAL//LOAD_ERROR:', error);
             this.elements.resultsGrid.innerHTML = `
