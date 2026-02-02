@@ -3,6 +3,12 @@
  * Terminal Brutalism Edition
  */
 
+// SUPABASE CONFIGURATION
+const SUPABASE_URL = 'https://pyiftzhzijcpqvvzhhjy.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5aWZ0emh6aWpjcHF2dnpoaGp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMjM0NTksImV4cCI6MjA4NTU5OTQ1OX0.lmDc5prm73X-nFRgopxCqkodOaGWEOVcDM19BZGyoDU';
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 const App = {
     allProblems: [],
     filteredProblems: [],
@@ -74,34 +80,38 @@ const App = {
     async loadData() {
         try {
             this.elements.loader.classList.remove('hidden');
-            // Fetch from local Node server
-            const response = await fetch('http://localhost:3000/api/problems');
             
-            if (!response.ok) {
-                throw new Error(`HTTP_ERROR: ${response.status}`);
-            }
+            // FETCH DIRECTLY FROM SUPABASE
+            const { data, error } = await supabase
+                .from('problems')
+                .select(`
+                    *,
+                    solutions (*)
+                `);
 
-            const data = await response.json();
+            if (error) throw error;
+
+            // Map data to match internal structure
+            // Supabase returns 'platforms' (DB col), we might need 'platform' (JS prop)
+            this.allProblems = data.map(p => ({
+                ...p,
+                platform: p.platforms || [] // Map DB 'platforms' to 'platform'
+            }));
             
-            if (!Array.isArray(data)) {
-                throw new Error('INVALID_DATA_FORMAT');
-            }
-
-            this.allProblems = data;
             this.filteredProblems = [...this.allProblems];
 
             this.renderCategories();
             this.renderResults();
             this.elements.loader.classList.add('hidden');
             
-            console.log('SUCCESS: DATA_STREAM_ESTABLISHED_WITH_SUPABASE');
+            console.log('SUCCESS: CONNECTED_TO_SUPABASE_DIRECTLY');
             
         } catch (error) {
             console.error('CRITICAL//LOAD_ERROR:', error);
             this.elements.resultsGrid.innerHTML = `
                 <div class="terminal-error">
-                    <p class="text-error">> FATAL: UNABLE_TO_ACCESS_MAINFRAME.</p>
-                    <p class="text-dim">> ENSURE_SERVER_IS_RUNNING [ npm start ].</p>
+                    <p class="text-error">> FATAL: UNABLE_TO_ACCESS_SUPABASE.</p>
+                    <p class="text-dim">> CHECK_NETWORK_CONNECTION.</p>
                     <p class="text-dim">> ERROR: ${error.message}</p>
                 </div>
             `;
@@ -110,10 +120,11 @@ const App = {
     },
 
     renderCategories() {
+        // Safe check for missing categories
         const categories = ['ALL', ...new Set(this.allProblems.map(p => (p.category || 'MISC').toUpperCase()))];
         this.elements.categoryContainer.innerHTML = '';
 
-        categories.forEach(cat => {
+        categories.sort().forEach(cat => {
             const pill = document.createElement('button');
             pill.className = `pill-terminal ${cat === this.currentCategory ? 'active' : ''}`;
             pill.textContent = `[ ${cat} ]`;
@@ -188,6 +199,7 @@ const App = {
             brick.appendChild(desc);
 
             // Solutions
+            // Supabase returns relations as arrays, so problem.solutions is correct
             (problem.solutions || []).forEach(sol => {
                 const solDiv = document.createElement('div');
                 solDiv.className = 'terminal-sol';
